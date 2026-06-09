@@ -28,6 +28,9 @@ abstract class CodePushRepository {
   void recordEvent(PatchEvent event);
 
   List<PatchEvent> events();
+
+  /// Most-recent check-in per device (live adoption telemetry).
+  List<DeviceCheckin> devices();
 }
 
 class InMemoryCodePushRepository implements CodePushRepository {
@@ -39,6 +42,7 @@ class InMemoryCodePushRepository implements CodePushRepository {
   final PatchStorage _storage;
   final List<PatchRecord> _patches = [];
   final List<PatchEvent> _events = [];
+  final Map<String, DeviceCheckin> _devices = {};
 
   /// Patch metadata is mirrored to disk so the dashboard survives restarts.
   /// (Swap for Postgres in production; this keeps the local routine durable.)
@@ -74,6 +78,7 @@ class InMemoryCodePushRepository implements CodePushRepository {
 
   @override
   Future<PatchCheckResponse> checkForPatch(PatchCheckRequest req) async {
+    _recordCheckin(req);
     final releaseKey =
         '${req.appId}|${req.releaseVersion}|${req.platform}|${req.arch}|${req.channel}';
 
@@ -166,4 +171,23 @@ class InMemoryCodePushRepository implements CodePushRepository {
 
   @override
   List<PatchEvent> events() => List.unmodifiable(_events);
+
+  @override
+  List<DeviceCheckin> devices() {
+    final list = _devices.values.toList()
+      ..sort((a, b) => b.lastSeen.compareTo(a.lastSeen));
+    return List.unmodifiable(list);
+  }
+
+  void _recordCheckin(PatchCheckRequest req) {
+    _devices[req.clientId] = DeviceCheckin(
+      clientId: req.clientId,
+      appId: req.appId,
+      releaseVersion: req.releaseVersion,
+      platform: req.platform,
+      arch: req.arch,
+      currentPatchNumber: req.currentPatchNumber,
+      lastSeen: DateTime.now(),
+    );
+  }
 }

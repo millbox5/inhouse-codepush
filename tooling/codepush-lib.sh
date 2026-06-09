@@ -14,6 +14,7 @@ load_config() {
   }
   # shellcheck disable=SC1090
   source "$TOOLING_DIR/config.env"
+  export LOCAL_ENGINE_MAVEN # hand the hook'd-engine repo to the Gradle build
   : "${FLUTTER_BIN:?set FLUTTER_BIN in config.env}"
   : "${APP_ID:?set APP_ID in config.env}"
   : "${RELEASE_VERSION:?set RELEASE_VERSION in config.env}"

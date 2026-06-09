@@ -72,8 +72,11 @@ adb shell pm clear <your.package.id>
 | Push refused: *"snapshot mismatch"* | Patch built with a different Flutter than installed. Use the exact `FLUTTER_BIN`; re-check `ENGINE_SNAPSHOT`. |
 | App `SIGABRT`s right after a patch | Snapshot or release mismatch (shipped a bad patch). `adb shell pm clear`, then roll back + push a correct patch. |
 | Patch never downloads | `release_version` in the updater ≠ the installed app's release, so the check API doesn't match. Align them. |
+| Release build can't reach the server (*EPERM / "Operation not permitted"*) | Release builds lack INTERNET — the Flutter template only adds it to the debug/profile manifests. Add `<uses-permission android:name="android.permission.INTERNET"/>` to `src/main/AndroidManifest.xml` (plus `android:usesCleartextTraffic="true"` for a plain-HTTP server). |
+| Patch downloads but the app keeps running old code | Built without the engine hook. The Gradle build logs `building WITHOUT the code-push hook` when `LOCAL_ENGINE_MAVEN` is unset — set it (see `engine/`). |
 | `branch not found` on build | The worktree had local edits and `git checkout` refused. The scripts use `git reset --hard origin/<branch>` — make sure `WORKTREE_DIR` is a dedicated worktree, not your main clone. |
 | Dashboard won't start headless (*terminal echo mode*) | `dart_frog dev` needs a TTY. `dashboard-serve.sh` auto-wraps it in `script` when run without one. |
+| `dart_frog dev` fails: *Address already in use :8181* | Another `dart_frog dev` already holds the Dart VM-service port. Run `dashboard-serve.sh --prod` (compiled server, no VM service). |
 | launchd job does nothing on macOS | Sandbox can't read `~/Desktop`/`~/Documents` without **Full Disk Access**. Move the repo to `~/code`, or grant `/bin/bash` Full Disk Access. |
 | Device fetches over a tunnel get an HTML interstitial | ngrok's browser-warning page. The updater already sends `ngrok-skip-browser-warning`; if you use a different tunnel, disable its interstitial. |
 | Emulator shows *"No Internet"* but host is online | Emulator DNS went stale. Cold-restart it with a forced DNS: `emulator -avd <name> -dns-server 8.8.8.8`. |

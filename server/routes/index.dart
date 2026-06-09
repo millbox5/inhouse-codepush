@@ -122,6 +122,15 @@ const _dashboardHtml = r'''<!doctype html>
   </div>
 
   <div class="card">
+    <h2>Devices — live adoption</h2>
+    <div id="adoption" class="meta">No check-ins yet — launch the app.</div>
+    <table style="margin-top:10px">
+      <thead><tr><th>Device</th><th>Release</th><th>On patch</th><th>Last seen</th></tr></thead>
+      <tbody id="deviceRows"></tbody>
+    </table>
+  </div>
+
+  <div class="card">
     <h2>All patches</h2>
     <table>
       <thead><tr><th>#</th><th>Release</th><th>Size</th><th>SHA-256</th><th>Signed</th><th>Status</th><th></th></tr></thead>
@@ -265,9 +274,27 @@ async function pollBuild(){
     }
   }catch(e){$("buildStatus").textContent="status error: "+e;$("build").disabled=false;}
 }
+function fmtAgo(iso){const s=Math.max(0,(Date.now()-new Date(iso).getTime())/1000);return s<60?Math.round(s)+"s ago":s<3600?Math.round(s/60)+"m ago":Math.round(s/3600)+"h ago";}
+async function loadDevices(){
+  try{
+    const r=await fetch("/admin/devices",{headers:H});
+    const d=(await r.json()).devices||[];
+    const by={};d.forEach(x=>{const k=x.current_patch_number==null?"none":("#"+x.current_patch_number);by[k]=(by[k]||0)+1;});
+    const summary=Object.keys(by).sort().map(k=>k+": <b>"+by[k]+"</b>").join(" · ");
+    $("adoption").innerHTML=d.length?(d.length+" device"+(d.length>1?"s":"")+" checked in — "+summary):"No check-ins yet — launch the app.";
+    $("deviceRows").innerHTML=d.map(x=>`<tr>
+      <td class="mono">${x.client_id}</td>
+      <td>${x.release_version}<div class="meta">${x.platform}/${x.arch}</div></td>
+      <td>${x.current_patch_number==null?'<span class="meta">none</span>':'<b>#'+x.current_patch_number+'</b>'}</td>
+      <td class="meta">${fmtAgo(x.last_seen)}</td>
+    </tr>`).join("");
+  }catch(e){$("adoption").textContent="failed to load devices: "+e;}
+}
 loadBranches();
 load();
+loadDevices();
 setInterval(load,5000);
+setInterval(loadDevices,5000);
 </script>
 </body>
 </html>''';

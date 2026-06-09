@@ -79,3 +79,35 @@ class PatchRecord {
         'size_bytes': sizeBytes,
       };
 }
+
+/// A device's most-recent check-in — live adoption telemetry, derived from the
+/// check API (no app-side change needed). In-memory only; resets on restart.
+class DeviceCheckin {
+  DeviceCheckin({
+    required this.clientId,
+    required this.appId,
+    required this.releaseVersion,
+    required this.platform,
+    required this.arch,
+    required this.currentPatchNumber,
+    required this.lastSeen,
+  });
+
+  final String clientId;
+  final String appId;
+  final String releaseVersion;
+  final String platform;
+  final String arch;
+  final int? currentPatchNumber;
+  final DateTime lastSeen;
+
+  Map<String, dynamic> toJson() => {
+        'client_id': clientId,
+        'app_id': appId,
+        'release_version': releaseVersion,
+        'platform': platform,
+        'arch': arch,
+        'current_patch_number': currentPatchNumber,
+        'last_seen': lastSeen.toIso8601String(),
+      };
+}

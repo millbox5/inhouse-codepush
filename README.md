@@ -57,6 +57,7 @@ Three pieces make that happen:
 | `flutter/` | Drop-in for **your** app: `inhouse_updater.dart` (code-push) and `apk_updater.dart` (optional full-APK self-update). |
 | `engine/` | The engine hook: `flutter-loader-hook.patch` + a Dockerized `build-engine.sh` for building a patched engine. |
 | `tooling/` | `config.env`-driven scripts: `dashboard-serve.sh`, `push-branch.sh`, `autopatch.sh`, launchd templates. |
+| `example/` | A runnable stock-Flutter demo wired for code push — proves the loop end-to-end. See [`example/README.md`](example/README.md). |
 | `docs/` | [`ARCHITECTURE.md`](docs/ARCHITECTURE.md) (deep dive) and [`PATCH-HOWTO.md`](docs/PATCH-HOWTO.md) (operate it). |
 | `.env.example` | The server's environment contract. |
 
