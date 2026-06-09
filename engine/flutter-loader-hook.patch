@@ -1,0 +1,27 @@
+diff --git a/engine/src/flutter/shell/platform/android/io/flutter/embedding/engine/loader/FlutterLoader.java b/engine/src/flutter/shell/platform/android/io/flutter/embedding/engine/loader/FlutterLoader.java
+index 117f9aa7..4ae2e0b9 100644
+--- a/engine/src/flutter/shell/platform/android/io/flutter/embedding/engine/loader/FlutterLoader.java
++++ b/engine/src/flutter/shell/platform/android/io/flutter/embedding/engine/loader/FlutterLoader.java
+@@ -327,6 +327,22 @@ public class FlutterLoader {
+         shellArgs.add(
+             "--" + ISOLATE_SNAPSHOT_DATA_KEY + "=" + flutterApplicationInfo.isolateSnapshotData);
+       } else {
++        // === IN-HOUSE CODE PUSH HOOK (Android AOT snapshot replacement) ===
++        // If a downloaded patch exists in our writable patch dir, register it as
++        // the FIRST aot-shared-library candidate. The engine tries these in the
++        // order added and falls back to the next if one fails to load, so a
++        // missing or corrupt patch is safe: the app simply runs its shipped code.
++        File patchedAotLib =
++            new File(applicationContext.getFilesDir(), "inhouse_patches/libapp.so");
++        if (patchedAotLib.exists()) {
++          Log.i(
++              TAG,
++              "[inhouse-codepush] loading patched libapp.so: "
++                  + patchedAotLib.getAbsolutePath());
++          shellArgs.add("--" + AOT_SHARED_LIBRARY_NAME + "=" + patchedAotLib.getAbsolutePath());
++        }
++        // === END IN-HOUSE CODE PUSH HOOK ===
++
+         shellArgs.add(
+             "--" + AOT_SHARED_LIBRARY_NAME + "=" + flutterApplicationInfo.aotSharedLibraryName);
+ 

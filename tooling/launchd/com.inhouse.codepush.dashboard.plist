@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- macOS launchd template. Replace __REPO__ with the absolute path to this
+     repo, copy to ~/Library/LaunchAgents/, then:
+       launchctl load ~/Library/LaunchAgents/com.inhouse.codepush.dashboard.plist
+     Keeps the dashboard server running and restarts it if it exits. -->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.inhouse.codepush.dashboard</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>__REPO__/tooling/dashboard-serve.sh</string>
+  </array>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+  <key>StandardOutPath</key><string>__REPO__/tooling/.state/dashboard.out.log</string>
+  <key>StandardErrorPath</key><string>__REPO__/tooling/.state/dashboard.err.log</string>
+</dict>
+</plist>

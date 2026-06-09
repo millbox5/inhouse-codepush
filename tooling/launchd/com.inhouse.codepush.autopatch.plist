@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- macOS launchd template. Replace __REPO__ with the absolute path to this
+     repo, copy to ~/Library/LaunchAgents/, then:
+       launchctl load ~/Library/LaunchAgents/com.inhouse.codepush.autopatch.plist
+     Runs autopatch.sh every hour (StartInterval=3600). -->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.inhouse.codepush.autopatch</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>__REPO__/tooling/autopatch.sh</string>
+  </array>
+  <key>StartInterval</key><integer>3600</integer>
+  <key>RunAtLoad</key><true/>
+  <key>StandardOutPath</key><string>__REPO__/tooling/.state/autopatch.out.log</string>
+  <key>StandardErrorPath</key><string>__REPO__/tooling/.state/autopatch.err.log</string>
+</dict>
+</plist>
