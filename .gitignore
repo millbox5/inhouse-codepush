@@ -13,6 +13,7 @@ tooling/.state/
 
 # --- build artifacts ---
 **/build/
+!server/lib/src/build/
 .dart_tool/
 .dart_frog/
 .packages

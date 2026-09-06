@@ -1,0 +1,9 @@
+build/
+.dart_tool/
+.dart_frog/
+_patches/
+test/
+.idea/
+.vscode/
+*.log
+.git/

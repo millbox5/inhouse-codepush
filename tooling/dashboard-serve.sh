@@ -41,5 +41,5 @@ fi
 if [ -t 0 ]; then
   exec dart_frog dev --port "$PORT"
 else
-  exec script -q /dev/null dart_frog dev --port "$PORT"
+  exec script -q -e -c "dart_frog dev --port $PORT" /dev/null
 fi
