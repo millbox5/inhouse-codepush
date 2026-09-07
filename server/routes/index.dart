@@ -22,14 +22,16 @@ const _dashboardHtml = r'''<!doctype html>
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link href="https://fonts.cdnfonts.com/css/space-grotesk" rel="stylesheet">
+                
 <title>In-House Code Push</title>
 <style>
-  :root{--bg:#0d1117;--panel:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#1f6feb;--green:#2ea043;--red:#da3633;}
+  :root{--bg:rgb(106, 0, 255);--panel:#fafbfd;--border:#30363d07;--text:#e6edf3;--muted:#8b949e;--accent:#6600ff;--green:#f7fdf8;--red:#da3633;}
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 'Space Grotesk', sans-serif}
   header{padding:18px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px}
   header h1{font-size:17px;margin:0;font-weight:650}
-  header .dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+  header .dot{width:9px;height:9px;border-radius:50%;background:var(--green)}
   header .tag{color:var(--muted);font-size:12px;margin-left:auto}
   .wrap{max-width:1000px;margin:0 auto;padding:24px 28px 70px}
   .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px}
@@ -37,7 +39,7 @@ const _dashboardHtml = r'''<!doctype html>
   .active{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
   .active .num{font-size:34px;font-weight:700;line-height:1}
   .meta{color:var(--muted);font-size:13px}
-  .urls code{background:#0b0f14;border:1px solid var(--border);padding:3px 8px;border-radius:6px;color:#79c0ff;display:inline-block;margin:2px 0}
+  .urls code{background:#0b0f14;border:1px solid var(--border);padding:3px 8px;border-radius:6px;color:#ffffff;display:inline-block;margin:2px 0}
   .row{display:flex;gap:12px;flex-wrap:wrap}
   label{display:block;font-size:12px;color:var(--muted);margin:0 0 4px}
   input{background:#0b0f14;border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 11px;width:100%;font:inherit}
@@ -64,7 +66,7 @@ const _dashboardHtml = r'''<!doctype html>
 </style>
 </head>
 <body>
-<header><span class="dot"></span><h1>In-House Code Push</h1><span class="tag">self-hosted</span></header>
+<header><span class="dot"></span><h1 >In-House Code Push</h1><span class="tag" style="color: white;">self-hosted</span></header>
 <div class="wrap">
 
   <div class="card">
@@ -94,7 +96,7 @@ const _dashboardHtml = r'''<!doctype html>
         </div>
       </div>
       <button id="refreshBranches" class="ghost">&#8635;</button>
-      <button id="build">&#128296; Build &amp; push</button>
+      <button id="build">Build &amp; push</button>
     </div>
     <div id="buildStatus" class="meta" style="margin-top:10px"></div>
     <pre id="buildLog" style="display:none;background:#0b0f14;border:1px solid var(--border);border-radius:8px;padding:10px;margin-top:8px;max-height:220px;overflow:auto;font-size:11px;line-height:1.45;color:#8b949e;white-space:pre-wrap"></pre>
@@ -117,7 +119,7 @@ const _dashboardHtml = r'''<!doctype html>
       <div class="field"><label>Channel</label><input id="channel" value="stable"/></div>
       <div class="field" style="max-width:120px"><label>Rollout %</label><input id="rollout" type="number" value="100"/></div>
     </div>
-    <button id="push" disabled>🚀 Push update</button>
+    <button id="push" disabled>Push update</button>
     <div id="msg"></div>
   </div>
 

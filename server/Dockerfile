@@ -84,8 +84,8 @@ VOLUME /data/patches
 
 ENV PORT=8080 \
     PATCH_STORAGE_DIR=/data/patches \
-    ADMIN_TOKEN=change-me \
-    PUBLIC_BASE_URL=http://localhost:8080 \
+    ADMIN_TOKEN=yklkjsnzp9qlc46hhuqkpthme \
+    PUBLIC_BASE_URL=https://codepush.kaascan.com \
     CODEPUSH_APP_ID=com.example.app \
     CODEPUSH_RELEASE_VERSION=1.0.0
 
