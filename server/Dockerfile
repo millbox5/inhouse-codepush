@@ -30,7 +30,7 @@
 ARG DART_VERSION=3.12
 ARG CODEPUSH_REPO=https://github.com/millbox5/inhouse-codepush.git
 ARG CODEPUSH_BRANCH=main
-ARG CODEPUSH_REF=f75a091
+ARG CODEPUSH_REF=20893f6
 
 FROM dart:${DART_VERSION} AS build
 
@@ -49,14 +49,15 @@ RUN dart pub global activate dart_frog_cli --version 1.2.14
 ENV PATH="$PATH:/root/.pub-cache/bin"
 
 # Sparse-checkout only server/ at the pinned commit into /src. GitHub won't
-# serve a bare SHA, so fetch the branch by name, then check out the pinned ref
-# (it must be reachable within the shallow/depth window).
+# serve a bare SHA, so fetch the branch's full history (blob:none keeps it slim
+# and sparse checkout fetches blobs only for server/), then check out the pinned
+# ref — which may be any ancestor, not just the branch tip.
 RUN git init -q /src \
     && mkdir -p /src/.git/info \
     && printf 'server/\n' > /src/.git/info/sparse-checkout \
     && git -C /src config core.sparsecheckout true \
     && git -C /src remote add origin "${CODEPUSH_REPO}" \
-    && GIT_TERMINAL_PROMPT=0 git -C /src fetch --depth 1 --no-tags origin "${CODEPUSH_BRANCH}" \
+    && GIT_TERMINAL_PROMPT=0 git -C /src fetch --filter=blob:none --no-tags origin "${CODEPUSH_BRANCH}" \
     && git -C /src checkout -q "${CODEPUSH_REF}" \
     && test -f /src/server/pubspec.yaml
 
