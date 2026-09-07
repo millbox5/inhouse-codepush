@@ -26,28 +26,28 @@ const _dashboardHtml = r'''<!doctype html>
                 
 <title>In-House Code Push</title>
 <style>
-  :root{--bg:rgb(106, 0, 255);--panel:#fafbfd;--border:#30363d07;--text:#e6edf3;--muted:#8b949e;--accent:#6600ff;--green:#f7fdf8;--red:#da3633;}
+  :root{--bg:rgb(106, 0, 255);--panel:#fafbfd;--border:#9669fe;--text:#e6edf3;--muted:#8b949e;--accent:#6600ff;--green:#f7fdf8;--red:#da3633;}
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 'Space Grotesk', sans-serif}
   header{padding:18px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px}
   header h1{font-size:17px;margin:0;font-weight:650}
-  header .dot{width:9px;height:9px;border-radius:50%;background:var(--green)}
+  header .dot{width:9px;height:9px;border-radius:00%;background:var(--green)}
   header .tag{color:var(--muted);font-size:12px;margin-left:auto}
   .wrap{max-width:1000px;margin:0 auto;padding:24px 28px 70px}
-  .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:0px;padding:20px;margin-bottom:20px}
   .card h2{margin:0 0 14px;font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
   .active{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
   .active .num{font-size:34px;font-weight:700;line-height:1}
   .meta{color:var(--muted);font-size:13px}
-  .urls code{background:#0b0f14;border:1px solid var(--border);padding:3px 8px;border-radius:6px;color:#ffffff;display:inline-block;margin:2px 0}
+  .urls code{background:#0b0f14;border:1px solid var(--border);padding:3px 8px;border-radius:0px;color:#ffffff;display:inline-block;margin:2px 0}
   .row{display:flex;gap:12px;flex-wrap:wrap}
   label{display:block;font-size:12px;color:var(--muted);margin:0 0 4px}
-  input{background:#0b0f14;border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 11px;width:100%;font:inherit}
+  input{background:#220547;border:1px solid var(--border);color:var(--text);border-radius:0px;padding:9px 11px;width:100%;font:inherit}
   .field{flex:1;min-width:120px;margin-bottom:12px}
-  .drop{border:2px dashed var(--border);border-radius:10px;padding:22px;text-align:center;color:var(--muted);cursor:pointer;transition:.15s}
+  .drop{border:2px dashed var(--border);border-radius:00px;padding:22px;text-align:center;color:var(--muted);cursor:pointer;transition:.15s}
   .drop.over{border-color:var(--accent);color:var(--text);background:rgba(31,111,235,.08)}
   .drop b{color:var(--text)}
-  button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 18px;font:inherit;font-weight:600;cursor:pointer}
+  button{background:var(--accent);color:#fff;border:0;border-radius:0px;padding:10px 18px;font:inherit;font-weight:600;cursor:pointer}
   button:disabled{opacity:.45;cursor:default}
   button.ghost{background:transparent;border:1px solid var(--border);color:var(--text);padding:5px 12px;font-weight:500}
   button.danger{border-color:rgba(218,54,51,.5);color:#f85149}
@@ -55,11 +55,11 @@ const _dashboardHtml = r'''<!doctype html>
   th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:top}
   th{color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.05em}
   tr:last-child td{border-bottom:0}
-  .badge{font-size:11px;padding:2px 9px;border-radius:20px;font-weight:600}
+  .badge{font-size:11px;padding:2px 9px;border-radius:00px;font-weight:600}
   .badge.on{background:rgba(46,160,67,.18);color:#3fb950}
   .badge.off{background:rgba(218,54,51,.16);color:#f85149}
   .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
-  #msg{padding:10px 14px;border-radius:8px;margin-top:12px;display:none}
+  #msg{padding:10px 14px;border-radius:0px;margin-top:12px;display:none}
   #msg.ok{display:block;background:rgba(46,160,67,.15);color:#3fb950}
   #msg.err{display:block;background:rgba(218,54,51,.15);color:#f85149}
   a{color:inherit;text-decoration:none}
@@ -79,9 +79,9 @@ const _dashboardHtml = r'''<!doctype html>
       </div>
       <div class="urls">
         <div class="meta">Patch URL (devices fetch this):</div>
-        <code>__PUBLIC_URL__/libapp.so</code><br/>
+        <code style="background: none;border: none;color: #6600ff;">__PUBLIC_URL__/libapp.so</code><br/>
         <div class="meta" style="margin-top:6px">Android emulator &rarr; host:</div>
-        <code>http://10.0.2.2:8080/libapp.so</code>
+        <code style="background: none;border: none;color: #6600ff;">http://10.0.2.2:8080/libapp.so</code>
       </div>
     </div>
   </div>
@@ -91,15 +91,15 @@ const _dashboardHtml = r'''<!doctype html>
     <div class="row" style="align-items:flex-end">
       <div class="field" style="flex:2;margin-bottom:0"><label>Branch</label>
         <div style="position:relative">
-          <input id="branch" autocomplete="off" placeholder="type to search branches…" style="background:#0b0f14;border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 11px;width:100%;font:inherit"/>
-          <div id="branchMenu" style="display:none;position:absolute;z-index:30;left:0;right:0;top:calc(100% + 4px);max-height:240px;overflow:auto;background:#0b0f14;border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.5)"></div>
+          <input id="branch" autocomplete="off" placeholder="type to search branches…" style="background:#0b0f14;border:1px solid var(--border);color:var(--text);border-radius:0px;padding:9px 11px;width:100%;font:inherit"/>
+          <div id="branchMenu" style="display:none;position:absolute;z-index:30;left:0;right:0;top:calc(100% + 4px);max-height:240px;overflow:auto;background:#0b0f14;border:1px solid var(--border);border-radius:0px;box-shadow:0 8px 24px rgba(0,0,0,.5)"></div>
         </div>
       </div>
-      <button id="refreshBranches" class="ghost">&#8635;</button>
-      <button id="build">Build &amp; push</button>
+      <button id="refreshBranches" class="ghost" style="color: black;border-radius:00px;">&#8635;</button>
+      <button id="build" style="border-radius:00px;">Build &amp; push</button>
     </div>
     <div id="buildStatus" class="meta" style="margin-top:10px"></div>
-    <pre id="buildLog" style="display:none;background:#0b0f14;border:1px solid var(--border);border-radius:8px;padding:10px;margin-top:8px;max-height:220px;overflow:auto;font-size:11px;line-height:1.45;color:#8b949e;white-space:pre-wrap"></pre>
+    <pre id="buildLog" style="display:none;background:#0b0f14;border:1px solid var(--border);border-radius:0px;padding:10px;margin-top:8px;max-height:220px;overflow:auto;font-size:11px;line-height:1.45;color:#8b949e;white-space:pre-wrap"></pre>
   </div>
 
   <div class="card">
