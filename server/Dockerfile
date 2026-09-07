@@ -30,7 +30,7 @@
 ARG DART_VERSION=3.12
 ARG CODEPUSH_REPO=https://github.com/millbox5/inhouse-codepush.git
 ARG CODEPUSH_BRANCH=main
-ARG CODEPUSH_REF=20893f6
+ARG CODEPUSH_REF=ba0f123
 
 FROM dart:${DART_VERSION} AS build
 
