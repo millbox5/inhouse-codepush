@@ -8,11 +8,7 @@
 # rather than COPY'd, so the image is reproducible from any build context. Only
 # server/ is checked out (sparse) to keep the image small.
 #
-# This repo is private, so Coolify builds need a GitHub token: pass the
-# CODEPUSH_GITHUB_TOKEN build argument (fine-grained PAT with read-only
-# "Contents" access to this repo). Never hardcode a token in this file — it is
-# only needed at build time and never lands in the final image. Public repos
-# can leave it empty.
+# The repo is PUBLIC, so the clone needs no credentials.
 #
 # Runtime configuration — set these in Coolify (Environment Variables):
 #   ADMIN_TOKEN              required — Bearer token guarding /admin/*
@@ -34,8 +30,7 @@
 ARG DART_VERSION=3.12
 ARG CODEPUSH_REPO=https://github.com/millbox5/inhouse-codepush.git
 ARG CODEPUSH_BRANCH=main
-ARG CODEPUSH_REF=4633406
-ARG CODEPUSH_GITHUB_TOKEN=
+ARG CODEPUSH_REF=f75a091
 
 FROM dart:${DART_VERSION} AS build
 
@@ -43,7 +38,6 @@ FROM dart:${DART_VERSION} AS build
 ARG CODEPUSH_REPO
 ARG CODEPUSH_BRANCH
 ARG CODEPUSH_REF
-ARG CODEPUSH_GITHUB_TOKEN
 
 # git is needed for the clone below.
 RUN apt-get update \
@@ -57,17 +51,11 @@ ENV PATH="$PATH:/root/.pub-cache/bin"
 # Sparse-checkout only server/ at the pinned commit into /src. GitHub won't
 # serve a bare SHA, so fetch the branch by name, then check out the pinned ref
 # (it must be reachable within the shallow/depth window).
-# NOTE: this repo is private, so the clone needs a valid CODEPUSH_GITHUB_TOKEN.
-# A failure here with exit 128 usually means the token is wrong/expired or its
-# GitHub account does not own this repo (GitHub then reports "repository not found").
 RUN git init -q /src \
     && mkdir -p /src/.git/info \
     && printf 'server/\n' > /src/.git/info/sparse-checkout \
     && git -C /src config core.sparsecheckout true \
-    && git -C /src remote add origin \
-         "$([ -n "$CODEPUSH_GITHUB_TOKEN" ] \
-             && echo "https://x-access-token:${CODEPUSH_GITHUB_TOKEN}@${CODEPUSH_REPO#https://}" \
-             || echo "$CODEPUSH_REPO")" \
+    && git -C /src remote add origin "${CODEPUSH_REPO}" \
     && GIT_TERMINAL_PROMPT=0 git -C /src fetch --depth 1 --no-tags origin "${CODEPUSH_BRANCH}" \
     && git -C /src checkout -q "${CODEPUSH_REF}" \
     && test -f /src/server/pubspec.yaml
