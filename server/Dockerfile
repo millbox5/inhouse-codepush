@@ -4,6 +4,15 @@
 # Mirrors tooling/dashboard-serve.sh --prod, AOT-compiled and served from the
 # official minimal `scratch` runtime (see dart:stable's /runtime/).
 #
+# The server source is CLONED from the git repo at a pinned commit (CODEPUSH_REF)
+# rather than COPY'd, so the image is reproducible from any build context. Only
+# server/ is checked out (sparse) to keep the image small.
+#
+# This repo is private, so Coolify builds need a GitHub token: set the build
+# argument CODEPUSH_GITHUB_TOKEN to a fine-grained PAT (read-only "Contents"
+# access to this repo). The token is only used during build and never lands in
+# the final image. Public repos can leave it empty.
+#
 # Runtime configuration — set these in Coolify (Environment Variables):
 #   ADMIN_TOKEN              required — Bearer token guarding /admin/*
 #   PUBLIC_BASE_URL          device-reachable URL advertised in patch download
@@ -22,26 +31,54 @@
 # registry.json index survive restarts.
 
 ARG DART_VERSION=3.12
+ARG CODEPUSH_REPO=https://github.com/millbox5/inhouse-codepush.git
+ARG CODEPUSH_BRANCH=main
+ARG CODEPUSH_REF=4633406
+# Fine-grained PAT with read-only "Contents" access (required for the private repo).
+ARG CODEPUSH_GITHUB_TOKEN=
 
 FROM dart:${DART_VERSION} AS build
 
-WORKDIR /app
+# ARG declared before FROM are not visible to RUN; redeclare to reuse the values.
+ARG CODEPUSH_REPO
+ARG CODEPUSH_BRANCH
+ARG CODEPUSH_REF
+ARG CODEPUSH_GITHUB_TOKEN
+
+# git is needed for the clone below.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends git ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 # Pin the same dart_frog_cli used for local dev (matching pubspec sdk ^3.5.0).
 RUN dart pub global activate dart_frog_cli --version 1.2.14
 ENV PATH="$PATH:/root/.pub-cache/bin"
 
-# Resolve dependencies first so this layer is cached separately from the source.
-COPY pubspec.yaml ./
-RUN dart pub get
+# Sparse-checkout only server/ at the pinned commit into /src. GitHub won't
+# serve a bare SHA, so fetch the branch by name, then check out the pinned ref
+# (it must be reachable within the shallow/depth window).
+RUN git init -q /src \
+    && mkdir -p /src/.git/info \
+    && printf 'server/\n' > /src/.git/info/sparse-checkout \
+    && git -C /src config core.sparsecheckout true \
+    && git -C /src remote add origin \
+         "$([ -n "$CODEPUSH_GITHUB_TOKEN" ] \
+             && echo "https://x-access-token:${CODEPUSH_GITHUB_TOKEN}@${CODEPUSH_REPO#https://}" \
+             || echo "$CODEPUSH_REPO")" \
+    && git -C /src fetch --depth 1 --no-tags origin "${CODEPUSH_BRANCH}" \
+    && git -C /src checkout -q "${CODEPUSH_REF}" \
+    && test -f /src/server/pubspec.yaml
 
-# Copy the server source (routes/, lib/) and generate the deployable project.
-COPY . .
-RUN dart_frog build
+WORKDIR /src/server
+
+# Resolve dependencies and generate the deployable project.
+RUN dart pub get \
+    && dart_frog build
 
 # AOT-compile the generated entrypoint into a self-contained binary.
-WORKDIR /app/build
-RUN dart pub get --offline \
+WORKDIR /src/server/build
+RUN mkdir -p /out \
+    && dart pub get --offline \
     && dart compile exe bin/server.dart -o /out/server
 
 # Minimal serving image: /runtime/ carries the Dart runtime + shared libraries
