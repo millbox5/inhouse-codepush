@@ -8,10 +8,11 @@
 # rather than COPY'd, so the image is reproducible from any build context. Only
 # server/ is checked out (sparse) to keep the image small.
 #
-# This repo is private, so Coolify builds need a GitHub token: set the build
-# argument CODEPUSH_GITHUB_TOKEN to a fine-grained PAT (read-only "Contents"
-# access to this repo). The token is only used during build and never lands in
-# the final image. Public repos can leave it empty.
+# This repo is private, so Coolify builds need a GitHub token: pass the
+# CODEPUSH_GITHUB_TOKEN build argument (fine-grained PAT with read-only
+# "Contents" access to this repo). Never hardcode a token in this file — it is
+# only needed at build time and never lands in the final image. Public repos
+# can leave it empty.
 #
 # Runtime configuration — set these in Coolify (Environment Variables):
 #   ADMIN_TOKEN              required — Bearer token guarding /admin/*
@@ -34,7 +35,6 @@ ARG DART_VERSION=3.12
 ARG CODEPUSH_REPO=https://github.com/millbox5/inhouse-codepush.git
 ARG CODEPUSH_BRANCH=main
 ARG CODEPUSH_REF=4633406
-# Fine-grained PAT with read-only "Contents" access (required for the private repo).
 ARG CODEPUSH_GITHUB_TOKEN=
 
 FROM dart:${DART_VERSION} AS build
