@@ -57,6 +57,9 @@ ENV PATH="$PATH:/root/.pub-cache/bin"
 # Sparse-checkout only server/ at the pinned commit into /src. GitHub won't
 # serve a bare SHA, so fetch the branch by name, then check out the pinned ref
 # (it must be reachable within the shallow/depth window).
+# NOTE: this repo is private, so the clone needs a valid CODEPUSH_GITHUB_TOKEN.
+# A failure here with exit 128 usually means the token is wrong/expired or its
+# GitHub account does not own this repo (GitHub then reports "repository not found").
 RUN git init -q /src \
     && mkdir -p /src/.git/info \
     && printf 'server/\n' > /src/.git/info/sparse-checkout \
@@ -65,7 +68,7 @@ RUN git init -q /src \
          "$([ -n "$CODEPUSH_GITHUB_TOKEN" ] \
              && echo "https://x-access-token:${CODEPUSH_GITHUB_TOKEN}@${CODEPUSH_REPO#https://}" \
              || echo "$CODEPUSH_REPO")" \
-    && git -C /src fetch --depth 1 --no-tags origin "${CODEPUSH_BRANCH}" \
+    && GIT_TERMINAL_PROMPT=0 git -C /src fetch --depth 1 --no-tags origin "${CODEPUSH_BRANCH}" \
     && git -C /src checkout -q "${CODEPUSH_REF}" \
     && test -f /src/server/pubspec.yaml
 
